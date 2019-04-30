@@ -3,13 +3,20 @@
  * @see 'MARTIN, Robert C. Clean code: a handbook of agile software craftsmanship. Pearson Education, 2009. S.18'
  **/
 
-val theList = ArrayList<Array<Int>>()
+val gameBoard: ArrayList<Cell> = ArrayList()
 
-fun getThem(): ArrayList<Array<Int>> {
-    val list1 = ArrayList<Array<Int>>()
-    for (x in theList) {
-        if (x[0] == 4)
-            list1.add(x)
+const val FLAGGED = 0
+const val STATUS_VALUE = 4
+
+class Cell(val info: Array<Int>){
+    fun isFlagged() = info[STATUS_VALUE] == FLAGGED
+}
+
+fun getFlaggedCells(): ArrayList<Cell> {
+    val flaggedCells = ArrayList<Cell>()
+    for (cell in gameBoard) {
+        if (cell.isFlagged())
+            flaggedCells.add(cell)
     }
-    return list1
+    return flaggedCells
 }
