@@ -3,7 +3,7 @@
  * @see 'MARTIN, Robert C. Clean code: a handbook of agile software craftsmanship. Pearson Education, 2009. S.18'
  **/
 
-val theList: ArrayList<Array<Int>> = ArrayList()
+val theList = ArrayList<Array<Int>>()
 
 fun getThem(): ArrayList<Array<Int>> {
     val list1 = ArrayList<Array<Int>>()
