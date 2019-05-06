@@ -6,6 +6,6 @@
 
 fun copyChars(a1: Array<Char>, a2: Array<Char>) {
     for (i in a1.indices) {
-        a1[i] = a2[i]
+        a2[i] = a1[i]
     }
 }
