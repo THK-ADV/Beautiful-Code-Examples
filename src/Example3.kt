@@ -1,4 +1,5 @@
 /**
+ * Avoid Disinformation
  * @author Florian Herborn
  * @see 'MARTIN, Robert C. Clean code: a handbook of agile software craftsmanship. Pearson Education, 2009. S.20'
  **/
