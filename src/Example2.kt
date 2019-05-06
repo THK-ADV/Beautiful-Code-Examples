@@ -6,8 +6,8 @@
 
 val gameBoard: ArrayList<Array<Int>> = ArrayList()
 
-const val FLAGGED = 0
-const val STATUS_VALUE = 4
+const val FLAGGED = 4
+const val STATUS_VALUE = 0
 
 fun getFlaggedCells(): ArrayList<Array<Int>> {
     val flaggedCells = ArrayList<Array<Int>>()
