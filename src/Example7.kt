@@ -7,9 +7,16 @@ import java.util.*
  **/
 
 fun main() {
-    val t = arrayOf<Int>()
-    var s = 0
-    (0 until 34).forEach { j ->
-        s += (t[j] * 4) / 5
+    val taskEstimate = arrayOf<Int>()
+
+    val realDaysPerIdealDay = 4
+    val workDaysPerWeak = 5
+    val numberOfTasks = 34
+
+    var sum = 0
+    (0 until numberOfTasks).forEach { j ->
+        val realTaskDays = taskEstimate[j] * realDaysPerIdealDay
+        val realTaskWeeks = realTaskDays / workDaysPerWeak
+        sum += realTaskWeeks
     }
 }
