@@ -1,7 +1,7 @@
 package example14
 
 /**
- * Function Names
+ * Don't Be Cute
  * @author Florian Herborn
  * @see 'MARTIN, Robert C. Clean code: example3.getA handbook of agile software craftsmanship. Pearson Education, 2009. S.26'
  **/
