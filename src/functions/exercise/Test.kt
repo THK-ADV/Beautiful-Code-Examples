@@ -23,7 +23,8 @@ object Test {
                 include("SetUp",  "-setup")
             }
             buffer.append(pageData.content)
-            if (pageData.hasAttribute("Test")) {
+
+            if (pageData.isTestPage()) {
                 include("TearDown",  "-teardown")
                 if (includeSuiteSetup) {
                     val suitePageName = SuiteResponder.SUITE_TEARDOWN_NAME
