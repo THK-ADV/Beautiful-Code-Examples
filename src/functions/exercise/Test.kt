@@ -16,36 +16,55 @@ object Test {
             val wikiPage = pageData.wikiPage
             val buffer = StringBuffer()
             if(pageData.hasAttribute("Test")) {
+                val arg = "-setup"
                 if(includeSuiteSetup) {
-                    val suiteSetup = PageCrawlerImpl.getInheritedPage(SuiteResponder.SUITE_SETUP_NAME, wikiPage)
+                    val pageName = SuiteResponder.SUITE_SETUP_NAME
+
+                    val suiteSetup = PageCrawlerImpl.getInheritedPage(pageName, wikiPage)
                     suiteSetup?.let {
                         val pagePath = it.getPageCrawler().getFullPath(suiteSetup)
                         val pagePathName = PathParser.render(pagePath)
-                        buffer.append("!include -setup .$pagePathName\n")
+                        buffer.append("!include $arg .$pagePathName\n")
                     }
+
                 }
-                val setup = PageCrawlerImpl.getInheritedPage("SetUp", wikiPage)
+                val setupPageName = "SetUp"
+
+                val setup = PageCrawlerImpl.getInheritedPage(setupPageName, wikiPage)
                 setup?.let {
                     val setupPath = wikiPage.getPageCrawler().getFullPath(setup)
                     val setupPathName = PathParser.render(setupPath)
-                    buffer.append("!include -setup .$setupPathName\n")
+                    buffer.append("!include $arg .$setupPathName\n")
                 }
+
+
             }
             buffer.append(pageData.content)
             if(pageData.hasAttribute("Test")) {
-                val teardown = PageCrawlerImpl.getInheritedPage("TearDown", wikiPage)
+                val teardownPageName = "TearDown"
+                val arg = "-teardown"
+
+
+                val teardown = PageCrawlerImpl.getInheritedPage(teardownPageName, wikiPage)
                 teardown?.let {
                     val teardownPath = wikiPage.getPageCrawler().getFullPath(teardown)
                     val teardownPathName = PathParser.render(teardownPath)
-                    buffer.append("\n!include -teardown .$teardownPathName\n")
+                    buffer.append("\n!include $arg .$teardownPathName\n")
                 }
+
+
                 if(includeSuiteSetup) {
-                    val suiteTeardown = PageCrawlerImpl.getInheritedPage(SuiteResponder.SUITE_TEARDOWN_NAME, wikiPage)
+                    val suitePageName = SuiteResponder.SUITE_TEARDOWN_NAME
+
+
+                    val suiteTeardown = PageCrawlerImpl.getInheritedPage(suitePageName, wikiPage)
                     suiteTeardown?.let {
                         val pagePath = wikiPage.getPageCrawler().getFullPath(suiteTeardown)
                         val pagePathName = PathParser.render(pagePath)
-                        buffer.append("\n!include -teardown .$pagePathName\n")
+                        buffer.append("\n!include $arg .$pagePathName\n")
                     }
+
+
                 }
             }
             pageData.content = buffer.toString()
