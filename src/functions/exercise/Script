@@ -1,0 +1,13 @@
+Funktionen sollten …
+… beschreibende Namen besitzen
+    -> Rename HtmlUtils zu SetupTeardownIncluder
+    -> Rename testableHtmlPage zu render
+… keine duplikationen beinhalten
+
+… klein sein
+… nur eine Sache tun
+… nur ein Abstraktionslevel besitzen
+… der “Step-down Rule” folgen
+… dem “Single Responsibility Principle” folgen
+… dem “Open Closed Principle” folgen
+… eine angemessene Anzahl an Parametern beinhalten

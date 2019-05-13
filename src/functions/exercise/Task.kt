@@ -1,4 +1,4 @@
-package functions.example1
+package functions.exercise
 
 import functions.data.*
 import functions.date.PageCrawlerImpl
@@ -8,7 +8,7 @@ import functions.date.PageCrawlerImpl
  * @author Florian Herborn
  * @see 'MARTIN, Robert C. Clean code: example3.getA handbook of agile software craftsmanship. Pearson Education, 2009. S.32'
  **/
-object Example1 {
+object Task {
 
     class HtmlUtil {
 
