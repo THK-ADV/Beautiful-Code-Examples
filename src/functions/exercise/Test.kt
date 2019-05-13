@@ -10,9 +10,9 @@ import functions.date.PageCrawlerImpl
  **/
 object Test {
 
-    class HtmlUtil {
+    class SetupTeardownIncluder {
 
-        fun testableHtml(pageData: PageData, includeSuiteSetup: Boolean): String {
+        fun render(pageData: PageData, includeSuiteSetup: Boolean): String {
             val wikiPage = pageData.wikiPage
             val buffer = StringBuffer()
             if(pageData.hasAttribute("Test")) {
