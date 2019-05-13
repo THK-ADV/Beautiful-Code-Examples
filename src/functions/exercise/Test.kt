@@ -16,7 +16,7 @@ object Test {
         private val buffer = StringBuffer()
 
         fun render(includeSuiteSetup: Boolean): String {
-            if (pageData.hasAttribute("Test")) {
+            if (pageData.isTestPage()) {
                 if (includeSuiteSetup) {
                     include(SuiteResponder.SUITE_SETUP_NAME, "-setup")
                 }
@@ -44,5 +44,7 @@ object Test {
         }
 
     }
+
+    fun PageData.isTestPage() = this.hasAttribute("Test")
 
 }
