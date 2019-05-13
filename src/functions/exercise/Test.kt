@@ -10,30 +10,31 @@ import functions.date.PageCrawlerImpl
  **/
 object Test {
 
-    class SetupTeardownIncluder {
+    class SetupTeardownIncluder(val pageData: PageData) {
 
-        fun render(pageData: PageData, includeSuiteSetup: Boolean): String {
-            val wikiPage = pageData.wikiPage
-            val buffer = StringBuffer()
+        private val wikiPage = pageData.wikiPage
+        private val buffer = StringBuffer()
+
+        fun render(includeSuiteSetup: Boolean): String {
             if (pageData.hasAttribute("Test")) {
                 if (includeSuiteSetup) {
-                    include(SuiteResponder.SUITE_SETUP_NAME, wikiPage, buffer, "-setup")
+                    include(SuiteResponder.SUITE_SETUP_NAME, "-setup")
                 }
-                include("SetUp", wikiPage, buffer, "-setup")
+                include("SetUp",  "-setup")
             }
             buffer.append(pageData.content)
             if (pageData.hasAttribute("Test")) {
-                include("TearDown", wikiPage, buffer, "-teardown")
+                include("TearDown",  "-teardown")
                 if (includeSuiteSetup) {
                     val suitePageName = SuiteResponder.SUITE_TEARDOWN_NAME
-                    include(suitePageName, wikiPage, buffer, "-teardown")
+                    include(suitePageName,  "-teardown")
                 }
             }
             pageData.content = buffer.toString()
             return pageData.getHtml()
         }
 
-        private fun include(pageName: String, wikiPage: WikiPage, buffer: StringBuffer, arg: String) {
+        private fun include(pageName: String, arg: String) {
             val suiteSetup = PageCrawlerImpl.getInheritedPage(pageName, wikiPage)
             suiteSetup?.let {
                 val pagePath = it.getPageCrawler().getFullPath(suiteSetup)
