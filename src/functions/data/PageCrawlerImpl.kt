@@ -1,4 +1,4 @@
-package functions.date
+package functions.data
 
 import functions.data.WikiPage
 import functions.data.WikiPagePath

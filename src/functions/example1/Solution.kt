@@ -1,7 +1,7 @@
-package functions.exercise
+package functions.example1
 
 import functions.data.*
-import functions.date.PageCrawlerImpl
+import functions.data.PageCrawlerImpl
 
 /**
  * Functions
