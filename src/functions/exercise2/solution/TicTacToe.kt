@@ -4,9 +4,9 @@ import kotlin.random.Random
 
 data class Player(val name: String, val symbol: Symbol)
 
-private sealed class PlayerInput
-private class IndicesInput(val rowIndex: Int, val colIndex: Int) : PlayerInput()
-private class ErrorInput(val message: String) : PlayerInput()
+private sealed class Input
+private class IndicesInput(val rowIndex: Int, val colIndex: Int) : Input()
+private class ErrorInput(val message: String) : Input()
 
 class TicTacToe(private val player1: Player, private val player2: Player) {
 
@@ -47,7 +47,7 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
         }
     }
 
-    private fun readPlayerInput(): PlayerInput {
+    private fun readPlayerInput(): Input {
         val indicesString = readLine()?.split(',') ?: return ErrorInput("Du hast entweder nichts eingegeben oder das Komma vergessen!")
         val rowIndexString = indicesString.getOrNull(0) ?: return ErrorInput("Du hast die Zeile vergessen!")
         val colIndexString = indicesString.getOrNull(1) ?: return ErrorInput("Du hast die Spalte vergessen!")
