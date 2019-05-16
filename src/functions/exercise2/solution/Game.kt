@@ -3,16 +3,16 @@ package functions.exercise2.solution
 import kotlin.random.Random
 
 
-data class Player(val name: String)
 
-private sealed class Symbol(val identifier: Char) {
+sealed class Symbol(private val identifier: Char) {
     override fun toString() = identifier.toString()
 }
 
-private object O : Symbol('O')
-private object X : Symbol('X')
-private object Unknown : Symbol('?')
-private object Empty : Symbol(' ')
+object O : Symbol('O')
+object X : Symbol('X')
+object Empty : Symbol(' ')
+
+data class Player(val name: String, val symbol: Symbol)
 
 private sealed class PlayerInput
 private class IndicesInput(val rowIndex: Int, val colIndex: Int) : PlayerInput()
@@ -79,7 +79,6 @@ private class Playground {
 
 class TicTacToe(private val player1: Player, private val player2: Player) {
 
-    private var symbolMap = getNewSymbolMap()
     private var currentPlayer = getRandomPlayer()
     private val playground = Playground()
 
@@ -104,32 +103,10 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
         processPlayerInput()
     }
 
-    private fun printDrawInfo() {
-        println("Das Spiel ist unentschieden")
-        printPlayground()
-    }
-
-    private fun printWinnersInfo() {
-        println("$currentPlayer hat gewonnen!")
-        printPlayground()
-    }
-
-    private fun printErrorMessage(input: ErrorInput) {
-        println(input.message)
-    }
-
     private fun processPlayerInput() {
         val choice = getPlayersChoice()
-        playground[choice.rowIndex][choice.colIndex] = getCurrentPlayerSymbol()
+        playground[choice.rowIndex][choice.colIndex] = currentPlayer.symbol
     }
-
-    private fun toggleCurrentPlayer() {
-        currentPlayer = if (currentPlayer == player1) player2 else player1
-    }
-
-
-    private fun getCurrentPlayerSymbol() = symbolMap[currentPlayer] ?: Unknown
-
 
     private fun getPlayersChoice(): IndicesInput = when (val input = readPlayerInput()) {
         is IndicesInput -> input
@@ -149,9 +126,27 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
         return IndicesInput(rowIndex, colIndex)
     }
 
+    private fun toggleCurrentPlayer() {
+        currentPlayer = if (currentPlayer == player1) player2 else player1
+    }
+
+    private fun printErrorMessage(input: ErrorInput) {
+        error(input.message)
+    }
+
     private fun printRoundInfo() {
         printCurrentPlayerInfo()
         printInputHint()
+        printPlayground()
+    }
+
+    private fun printDrawInfo() {
+        println("Das Spiel ist unentschieden")
+        printPlayground()
+    }
+
+    private fun printWinnersInfo() {
+        println("${currentPlayer.name} hat mit seinem Symbol ${currentPlayer.symbol} gewonnen!")
         printPlayground()
     }
 
@@ -160,7 +155,7 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
     }
 
     private fun printCurrentPlayerInfo() {
-        println("${player1.name}, du bist an der Reihe.")
+        println("${currentPlayer.name}, du bist an der Reihe. Dein Symbol ist ${currentPlayer.symbol}")
     }
 
     private fun printInputHint() {
@@ -169,10 +164,6 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
 
 
     private fun getRandomPlayer() = if (Random.nextBoolean()) player1 else player2
-    private fun getNewSymbolMap() = hashMapOf(
-            player1 to X,
-            player2 to O
-    )
 
 
 }
@@ -180,7 +171,7 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
 object Game {
     @JvmStatic
     fun main(args: Array<String>) {
-        val game = TicTacToe(Player("Paul"), Player("Hans"))
+        val game = TicTacToe(Player("Paul", O), Player("Hans", X))
         game.start()
     }
 }
