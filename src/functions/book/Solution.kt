@@ -1,4 +1,4 @@
-package functions.example1
+package functions.book
 
 import functions.data.*
 import functions.data.PageCrawlerImpl

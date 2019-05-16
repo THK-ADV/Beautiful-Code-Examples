@@ -1,0 +1,186 @@
+package functions.exercise2.solution
+
+import kotlin.random.Random
+
+
+data class Player(val name: String)
+
+private sealed class Symbol(val identifier: Char) {
+    override fun toString() = identifier.toString()
+}
+
+private object O : Symbol('O')
+private object X : Symbol('X')
+private object Unknown : Symbol('?')
+private object Empty : Symbol(' ')
+
+private sealed class PlayerInput
+private class IndicesInput(val rowIndex: Int, val colIndex: Int) : PlayerInput()
+private class ErrorInput(val message: String) : PlayerInput()
+
+private class Playground {
+
+    private val map = Array(CELLS_PER_ROW) { Array<Symbol>(CELLS_PER_COLUMN) { Empty } }
+
+    fun hasWinState(): Boolean {
+        return hasFullRow()
+                || hasFullColumn()
+                || hasFullDiag()
+    }
+
+    private fun hasFullDiag() =
+            allTheSameAndNotEmpty(map[0][0], map[1][1], map[2][2])
+                    || allTheSameAndNotEmpty(map[0][2], map[1][1], map[2][0])
+
+    private fun hasFullRow() =
+            isFullRow(0)
+                    || isFullRow(1)
+                    || isFullRow(2)
+
+    private fun hasFullColumn() =
+            isFullColumn(0)
+                    || isFullColumn(1)
+                    || isFullColumn(2)
+
+    private fun isFullRow(rowIndex: Int) = allTheSameAndNotEmpty(map[rowIndex][0], map[rowIndex][1], map[rowIndex][2])
+
+    private fun isFullColumn(colIndex: Int) = allTheSameAndNotEmpty(map[0][colIndex], map[1][colIndex], map[2][colIndex])
+
+    private fun allTheSameAndNotEmpty(vararg symbols: Symbol) = symbols.all {
+        it !is Empty && it == symbols.firstOrNull()
+    }
+
+    fun hasDrawState() = map.flatten().none { it is Empty }
+
+    operator fun set(rowIndex: Int, colIndex: Int, symbol: Symbol) {
+        map[rowIndex][colIndex] = symbol
+    }
+
+    operator fun get(rowIndex: Int): Array<Symbol> = map[rowIndex]
+
+    operator fun get(rowIndex: Int, colIndex: Int): Symbol = map[rowIndex][colIndex]
+
+    override fun toString(): String {
+        return """
+                    0   1   2
+                0  _${map[0][0]}_|_${map[0][1]}_|_${map[0][2]}_
+                1  _${map[1][0]}_|_${map[1][1]}_|_${map[1][2]}_
+                2   ${map[2][0]} | ${map[2][1]} | ${map[2][2]}
+            """.trimIndent()
+    }
+
+    companion object {
+        private const val CELLS_PER_ROW = 3
+        private const val CELLS_PER_COLUMN = 3
+    }
+
+}
+
+
+class TicTacToe(private val player1: Player, private val player2: Player) {
+
+    private var symbolMap = getNewSymbolMap()
+    private var currentPlayer = getRandomPlayer()
+    private val playground = Playground()
+
+    fun start() {
+        nextRound()
+    }
+
+    private fun nextRound() {
+        when {
+            playground.hasWinState() -> printWinnersInfo()
+            playground.hasDrawState() -> printDrawInfo()
+            else -> {
+                toggleCurrentPlayer()
+                playRound()
+                nextRound()
+            }
+        }
+    }
+
+    private fun playRound() {
+        printRoundInfo()
+        processPlayerInput()
+    }
+
+    private fun printDrawInfo() {
+        println("Das Spiel ist unentschieden")
+        printPlayground()
+    }
+
+    private fun printWinnersInfo() {
+        println("$currentPlayer hat gewonnen!")
+        printPlayground()
+    }
+
+    private fun printErrorMessage(input: ErrorInput) {
+        println(input.message)
+    }
+
+    private fun processPlayerInput() {
+        val choice = getPlayersChoice()
+        playground[choice.rowIndex][choice.colIndex] = getCurrentPlayerSymbol()
+    }
+
+    private fun toggleCurrentPlayer() {
+        currentPlayer = if (currentPlayer == player1) player2 else player1
+    }
+
+
+    private fun getCurrentPlayerSymbol() = symbolMap[currentPlayer] ?: Unknown
+
+
+    private fun getPlayersChoice(): IndicesInput = when (val input = readPlayerInput()) {
+        is IndicesInput -> input
+        is ErrorInput -> {
+            printErrorMessage(input)
+            getPlayersChoice()
+        }
+
+    }
+
+    private fun readPlayerInput(): PlayerInput {
+        val indicesString = readLine()?.split(',') ?: return ErrorInput("Du musst eine Eingabe tätigen")
+        val rowIndexString = indicesString.getOrNull(0) ?: return ErrorInput("Du musst einen row index angeben")
+        val colIndexString = indicesString.getOrNull(1) ?: return ErrorInput("Du musst einen column index angeben")
+        val rowIndex = rowIndexString.toIntOrNull() ?: return ErrorInput("Du hast einen invaliden row index angegeben")
+        val colIndex = colIndexString.toIntOrNull() ?: return ErrorInput("Du hast einen invaliden column index angegeben")
+        return IndicesInput(rowIndex, colIndex)
+    }
+
+    private fun printRoundInfo() {
+        printCurrentPlayerInfo()
+        printInputHint()
+        printPlayground()
+    }
+
+    private fun printPlayground() {
+        println(playground)
+    }
+
+    private fun printCurrentPlayerInfo() {
+        println("${player1.name}, du bist an der Reihe.")
+    }
+
+    private fun printInputHint() {
+        println("Bitte gebe ein, in welche Zelle dein Symbol gesetzt werden soll. Gebe deine Auswahl in folgender Form ein: rowIndex,colIndex")
+    }
+
+
+    private fun getRandomPlayer() = if (Random.nextBoolean()) player1 else player2
+    private fun getNewSymbolMap() = hashMapOf(
+            player1 to X,
+            player2 to O
+    )
+
+
+}
+
+object Game {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val game = TicTacToe(Player("Paul"), Player("Hans"))
+        game.start()
+    }
+}
