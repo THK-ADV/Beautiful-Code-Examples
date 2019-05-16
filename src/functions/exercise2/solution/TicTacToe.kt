@@ -49,11 +49,14 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
     }
 
     private fun readPlayerInput(): PlayerInput {
-        val indicesString = readLine()?.split(',') ?: return ErrorInput("Du musst eine Eingabe tätigen")
-        val rowIndexString = indicesString.getOrNull(0) ?: return ErrorInput("Du musst einen row index angeben")
-        val colIndexString = indicesString.getOrNull(1) ?: return ErrorInput("Du musst einen column index angeben")
-        val rowIndex = rowIndexString.toIntOrNull() ?: return ErrorInput("Du hast einen invaliden row index angegeben")
-        val colIndex = colIndexString.toIntOrNull() ?: return ErrorInput("Du hast einen invaliden column index angegeben")
+        val indicesString = readLine()?.split(',') ?: return ErrorInput("Du hast entweder nichts eingegeben oder das Komma vergessen!")
+        val rowIndexString = indicesString.getOrNull(0) ?: return ErrorInput("Du hast die Zeile vergessen!")
+        val colIndexString = indicesString.getOrNull(1) ?: return ErrorInput("Du hast die Spalte vergessen!")
+        val rowIndex = rowIndexString.toIntOrNull() ?: return ErrorInput("Dein Zeilenindex war keine Zahl!")
+        val colIndex = colIndexString.toIntOrNull() ?: return ErrorInput("Dein Spaltenindex war keine Zahl!")
+        if (!playground.isValidIndex(rowIndex)) return ErrorInput("Es gibt nur 3 Zeilen! Gebe einen index zwischen 0 und 2 ein!")
+        if (!playground.isValidIndex(colIndex)) return ErrorInput("Es gibt nur 3 Spalten! Gebe einen index zwischen 0 und 2 ein!")
+        if (!playground.isValidMove(rowIndex, colIndex)) return ErrorInput("Du kommst zu spät, hier war schon einer!")
         return IndicesInput(rowIndex, colIndex)
     }
 
@@ -62,7 +65,7 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
     }
 
     private fun printErrorMessage(input: ErrorInput) {
-        error(input.message)
+        System.err.println(input.message)
     }
 
     private fun printRoundInfo() {

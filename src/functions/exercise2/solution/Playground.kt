@@ -24,6 +24,10 @@ class Playground {
                     || isFullColumn(1)
                     || isFullColumn(2)
 
+    fun isValidMove(rowIndex: Int, colIndex: Int) = map[rowIndex][colIndex] is Empty
+
+    fun isValidIndex(index: Int) = index in (0..2)
+
     private fun isFullRow(rowIndex: Int) = allTheSameAndNotEmpty(map[rowIndex][0], map[rowIndex][1], map[rowIndex][2])
 
     private fun isFullColumn(colIndex: Int) = allTheSameAndNotEmpty(map[0][colIndex], map[1][colIndex], map[2][colIndex])

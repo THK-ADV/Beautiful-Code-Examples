@@ -1,10 +1,5 @@
 package functions.exercise2.solution
 
-import kotlin.random.Random
-
-
-
-
 object Game {
     @JvmStatic
     fun main(args: Array<String>) {
