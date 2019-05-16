@@ -42,10 +42,9 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
     private fun getPlayersChoice(): IndicesInput = when (val input = readPlayerInput()) {
         is IndicesInput -> input
         is ErrorInput -> {
-            printErrorMessage(input)
+            System.err.println(input.message)
             getPlayersChoice()
         }
-
     }
 
     private fun readPlayerInput(): PlayerInput {
@@ -62,10 +61,6 @@ class TicTacToe(private val player1: Player, private val player2: Player) {
 
     private fun toggleCurrentPlayer() {
         currentPlayer = if (currentPlayer == player1) player2 else player1
-    }
-
-    private fun printErrorMessage(input: ErrorInput) {
-        System.err.println(input.message)
     }
 
     private fun printRoundInfo() {
