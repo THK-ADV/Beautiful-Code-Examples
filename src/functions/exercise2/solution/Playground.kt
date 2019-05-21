@@ -1,5 +1,7 @@
 package functions.exercise2.solution
 
+data class Cell(val rowIndex: Int, val colIndex: Int)
+
 class Playground {
 
     private val map = Array(CELLS_PER_ROW) { Array<Symbol>(CELLS_PER_COLUMN) { Empty } }
