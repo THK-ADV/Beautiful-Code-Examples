@@ -24,9 +24,11 @@ class Playground {
                     || isFullColumn(1)
                     || isFullColumn(2)
 
-    fun isValidMove(rowIndex: Int, colIndex: Int) = map[rowIndex][colIndex] is Empty
+    fun isValidMove(cell: Cell) = this[cell] is Empty
 
-    fun isValidIndex(index: Int) = index in (0..2)
+    private fun isValidIndex(index: Int) = index in (0..2)
+
+    fun isCellOnBoard(cell: Cell) = isValidIndex(cell.rowIndex) && isValidIndex(cell.colIndex)
 
     private fun isFullRow(rowIndex: Int) = allTheSameAndNotEmpty(map[rowIndex][0], map[rowIndex][1], map[rowIndex][2])
 
@@ -38,13 +40,11 @@ class Playground {
 
     fun hasDrawState() = map.flatten().none { it is Empty }
 
-    operator fun set(rowIndex: Int, colIndex: Int, symbol: Symbol) {
-        map[rowIndex][colIndex] = symbol
+    operator fun set(cell: Cell, symbol: Symbol) {
+        map[cell.rowIndex][cell.colIndex] = symbol
     }
 
-    operator fun get(rowIndex: Int): Array<Symbol> = map[rowIndex]
-
-    operator fun get(rowIndex: Int, colIndex: Int): Symbol = map[rowIndex][colIndex]
+    operator fun get(cell: Cell): Symbol = map[cell.rowIndex][cell.colIndex]
 
     override fun toString(): String {
         return """
