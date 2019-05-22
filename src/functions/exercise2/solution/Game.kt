@@ -6,7 +6,9 @@ object Game {
         val moderator = GermanTicTacToeConsoleModerator("Peter")
         val player1 = Player("Paul", X)
         val player2 = Player("Hans", O)
-        val game = TicTacToe(player1, player2, moderator)
+        val playerSupplier = RoundRobinPlayerSupplier(player1, player2)
+        val game = TicTacToe(playerSupplier)
+        game.addObserver(moderator)
         game.start()
     }
 }

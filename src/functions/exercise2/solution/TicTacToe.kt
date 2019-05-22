@@ -4,15 +4,15 @@ package functions.exercise2.solution
 interface GameListener {
     fun onGameStateChanged(gameState: GameState)
     fun onInputStateChanged(inputState: InputState)
-    fun onInputRequested(): String?
 }
 
-private class DefaultGameListener : GameListener {
-    override fun onGameStateChanged(gameState: GameState) {}
-    override fun onInputStateChanged(inputState: InputState) {}
-    override fun onInputRequested(): String? = readLine()
+interface InputAdapter {
+    fun getInput(): String?
 }
 
+class ConsoleInputAdapter: InputAdapter {
+    override fun getInput() = readLine()
+}
 
 sealed class GameState
 object InitializedGame : GameState()
@@ -23,26 +23,49 @@ class Win(val winner: Player, val playground: Playground) : GameState()
 class Draw(val playground: Playground) : GameState()
 
 
-class TicTacToe(
-        private val player1: Player,
-        private val player2: Player,
-        private val gameListener: GameListener = DefaultGameListener()
-) : GameListener by gameListener {
+interface Observable<T> {
+    fun removeObserver(listener: T)
+    fun addObserver(listener: T)
+}
 
-    private var currentPlayer = player1
+interface PlayerSupplier {
+    fun getFirstTurnPlayer(): Player
+    fun getCurrentPlayer(): Player
+    fun switchToNextPlayer()
+}
+
+class RoundRobinPlayerSupplier(private val player1: Player, private val player2: Player): PlayerSupplier {
+
+    private var currentPlayer = getFirstTurnPlayer()
+
+    override fun getFirstTurnPlayer() = player1
+
+    override fun getCurrentPlayer() = currentPlayer
+
+    override fun switchToNextPlayer() {
+        currentPlayer = if(currentPlayer == player1) player2 else player1
+    }
+}
+
+class TicTacToe(
+        private val playerSupplier: PlayerSupplier,
+        private val inputAdapter: InputAdapter = ConsoleInputAdapter()
+): Observable<GameListener>{
+
+    private val gameListeners = mutableListOf<GameListener>()
     private val playground = Playground()
     private val inputValidator = InputValidator()
 
     private var gameState: GameState = InitializedGame
         set(value) {
             field = value
-            onGameStateChanged(field)
+            gameListeners.forEach { it.onGameStateChanged(field) }
         }
 
     private var inputState: InputState =  InitializedInput
         set(value) {
             field = value
-            onInputStateChanged(field)
+            gameListeners.forEach { it.onInputStateChanged(field) }
         }
 
 
@@ -62,21 +85,21 @@ class TicTacToe(
 
     private fun updateGameState() {
         gameState = when {
-            playground.hasWinState() -> Win(currentPlayer, playground)
+            playground.hasWinState() -> Win(playerSupplier.getCurrentPlayer(), playground)
             playground.hasDrawState() -> Draw(playground)
             else -> RoundRequested
         }
     }
 
     private fun playRound() {
-        toggleCurrentPlayer()
-        gameState = RoundStarted(currentPlayer, playground)
+        playerSupplier.switchToNextPlayer()
+        gameState = RoundStarted(playerSupplier.getCurrentPlayer(), playground)
         processPlayerInput()
     }
 
     private fun processPlayerInput() {
         val choice = getPlayersChoice()
-        playground[choice] = currentPlayer.symbol
+        playground[choice] = playerSupplier.getCurrentPlayer().symbol
     }
 
     private fun getPlayersChoice(): Cell {
@@ -88,12 +111,17 @@ class TicTacToe(
     }
 
     private fun requestInput() {
-        inputState = Requesting(currentPlayer, playground)
-        inputState = inputValidator.getErrorOf(onInputRequested(), playground)
+        inputState = Requesting(playerSupplier.getCurrentPlayer(), playground)
+        inputState = inputValidator.getErrorOf(inputAdapter.getInput(), playground)
     }
 
-    private fun toggleCurrentPlayer() {
-        currentPlayer = if (currentPlayer == player1) player2 else player1
+
+    override fun addObserver(listener: GameListener) {
+        gameListeners.add(listener)
+    }
+
+    override fun removeObserver(listener: GameListener) {
+        gameListeners.remove(listener)
     }
 
 

@@ -28,8 +28,6 @@ class GermanTicTacToeConsoleModerator(private val name: String) : GameListener {
         say("Wähle eine Zelle. Deine Eingabe sollte so aussehen: <zeile>,<spalte>")
     }
 
-    override fun onInputRequested(): String? = readLine()
-
     private fun introduceGame() {
         say("""
             Hallo, mein Name ist $name.
