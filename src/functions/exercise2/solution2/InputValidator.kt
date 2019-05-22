@@ -1,4 +1,4 @@
-package functions.exercise2.solution
+package functions.exercise2.solution2
 
 
 sealed class InputState

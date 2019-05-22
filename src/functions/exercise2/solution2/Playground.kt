@@ -1,4 +1,4 @@
-package functions.exercise2.solution
+package functions.exercise2.solution2
 
 data class Cell(val rowIndex: Int, val colIndex: Int)
 
