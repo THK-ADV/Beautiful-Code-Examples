@@ -1,81 +1,91 @@
 package functions.exercise2.solution
 
-interface Moderator {
-    val io: IOAdapter
-    val name: String
-    fun introduceGame()
-    fun introduceRound(playground: Playground)
-    fun showPlayground(playground: Playground)
-    fun announceWinner(player: Player, playground: Playground)
-    fun announceDraw(playground: Playground)
-    fun sayNoInputFound()
-    fun sayMissingRow()
-    fun sayMissingColumn()
-    fun sayInvalidRowIndex()
-    fun sayInvalidColumnIndex()
-    fun sayCellOutOfBounds()
-    fun sayCellOccupied()
-    fun askForChoice(player: Player, inputPattern: String): String?
-}
 
-class GermanTicTacToeModerator(override val name: String, override val io: IOAdapter): Moderator {
-    override fun introduceRound(playground: Playground) {
-        io printMessage "Die nächste Runde beginnt. Das Aktuelle Spielfeld sieht so aus:"
-        showPlayground(playground)
+class GermanTicTacToeConsoleModerator(private val name: String) : GameListener {
+    override fun onGameStateChanged(gameState: GameState) {
+        when (gameState) {
+            is Started -> introduceGame()
+            is RoundStarted -> introduceRound(gameState)
+            is Win -> announceWinner(gameState)
+            is Draw -> announceDraw(gameState)
+        }
     }
 
-    override fun announceWinner(player: Player, playground: Playground) {
-        io printMessage "${player.name} hat mit seinem Symbol ${player.symbol} gewonnen!"
-        showPlayground(playground)
+    override fun onInputStateChanged(inputState: InputState) {
+        when (inputState) {
+            is NoInput -> sayNoInputFound()
+            is InvalidRow -> sayInvalidRow()
+            is InvalidColumn -> sayInvalidColumn()
+            is MissingRow -> sayMissingRow()
+            is MissingColumn -> sayMissingColumn()
+            is CellOccupied -> sayCellOccupied()
+            is CellOutOfBounds -> sayCellOutOfBounds()
+            is Requesting -> askForInput()
+        }
     }
 
-    override fun announceDraw(playground: Playground) {
-        io printMessage "Das Spiel ist unentschieden!"
-        showPlayground(playground)
+    private fun askForInput() {
+        say("Wähle eine Zelle. Deine Eingabe sollte so aussehen: <zeile>,<spalte>")
     }
 
-    override fun showPlayground(playground: Playground) {
-        io printMessage playground.toString()
-    }
+    override fun onInputRequested(): String? = readLine()
 
-    override fun introduceGame() {
-        io printMessage """
+    private fun introduceGame() {
+        say("""
             Hallo, mein Name ist $name.
             Ich begleite euch bei diesem Tic Tac Toe Spiel und helfe euch weiter, wenn ihr etwas falsch macht.
-        """.trimIndent()
+        """.trimIndent())
     }
 
-    override fun sayNoInputFound() {
-        io printError "Du hast entweder nichts eingegeben!"
+    private fun introduceRound(roundStartetState: RoundStarted) {
+        say("Die nächste Runde beginnt. Du bist dran ${roundStartetState.player.name}. Dein zeichen ist ${roundStartetState.player.symbol}")
+        showCurrentPlayground(roundStartetState.playground)
     }
 
-    override fun sayMissingRow() {
-        io printError "Du hast die Zeile vergessen!"
+    private fun showCurrentPlayground(playground: Playground) {
+        say("Das Aktuelle Spielfeld sieht so aus:\n$playground")
     }
 
-    override fun sayMissingColumn() {
-        io printError "Du hast die Spalte vergessen!"
+    private fun announceWinner(winState: Win) {
+        say("${winState.winner.name} hat mit seinem Symbol ${winState.winner.symbol} gewonnen!")
+        showCurrentPlayground(winState.playground)
     }
 
-    override fun sayInvalidRowIndex() {
-        io printError "Dein Zeilenindex war keine Zahl!"
+    private fun announceDraw(drawState: Draw) {
+        say("Das Spiel ist unentschieden!")
+        showCurrentPlayground(drawState.playground)
     }
 
-    override fun sayInvalidColumnIndex() {
-        io printError "Dein Spaltenindex war keine Zahl!"
+    private fun sayNoInputFound() {
+        say("Du hast entweder nichts eingegeben!")
     }
 
-    override fun sayCellOutOfBounds() {
-        io printError "Es gibt nur 3 Spalten! Gebe einen index zwischen 0 und 2 ein!"
+    private fun sayMissingRow() {
+        say("Du hast die Zeile vergessen!")
     }
 
-    override fun sayCellOccupied() {
-        io printError "Du kommst zu spät, hier war schon einer!"
+    private fun sayMissingColumn() {
+        say("Du hast die Spalte vergessen!")
     }
 
-    override fun askForChoice(player: Player, inputPattern: String): String? {
-        io printMessage "Du bist dran ${player.name}. Mach deine eingabe in der Form $inputPattern. Dein zeichen ist ${player.symbol}"
-        return io.readInput()
+    private fun sayInvalidRow() {
+        say("Dein Zeilenindex war keine Zahl!")
+    }
+
+    private fun sayInvalidColumn() {
+        say("Dein Spaltenindex war keine Zahl!")
+    }
+
+    private fun sayCellOutOfBounds() {
+        say("Es gibt nur 3 Spalten! Gebe einen index zwischen 0 und 2 ein!")
+    }
+
+    private fun sayCellOccupied() {
+        say("Du kommst zu spät, hier war schon einer!")
+    }
+
+    private fun say(message: String) {
+        println("$name:\n$message\n")
     }
 
 }

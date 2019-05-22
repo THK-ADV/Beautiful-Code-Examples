@@ -26,11 +26,13 @@ class Playground {
                     || isFullColumn(1)
                     || isFullColumn(2)
 
-    fun isValidMove(cell: Cell) = this[cell] is Empty
+    fun isValidMove(cell: Cell) = isValidMove(cell.rowIndex, cell.colIndex)
+    fun isValidMove(rowIndex: Int, colIndex: Int) = this[rowIndex, colIndex] is Empty
 
     private fun isValidIndex(index: Int) = index in (0..2)
 
-    fun isCellOnBoard(cell: Cell) = isValidIndex(cell.rowIndex) && isValidIndex(cell.colIndex)
+    fun isOnBoard(cell: Cell) = isOnBoard(cell.rowIndex, cell.colIndex)
+    fun isOnBoard(rowIndex: Int, colIndex: Int) = isValidIndex(rowIndex) && isValidIndex(colIndex)
 
     private fun isFullRow(rowIndex: Int) = allTheSameAndNotEmpty(map[rowIndex][0], map[rowIndex][1], map[rowIndex][2])
 
@@ -47,6 +49,7 @@ class Playground {
     }
 
     operator fun get(cell: Cell): Symbol = map[cell.rowIndex][cell.colIndex]
+    operator fun get(rowIndex: Int, colIndex: Int): Symbol = map[rowIndex][colIndex]
 
     override fun toString(): String {
         return """
@@ -56,6 +59,7 @@ class Playground {
                 2   ${map[2][0]} | ${map[2][1]} | ${map[2][2]}
             """.trimIndent()
     }
+
 
     companion object {
         private const val CELLS_PER_ROW = 3

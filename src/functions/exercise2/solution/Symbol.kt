@@ -6,3 +6,6 @@ sealed class Symbol(private val identifier: Char) {
 object O : Symbol('O')
 object X : Symbol('X')
 object Empty : Symbol(' ')
+
+
+data class Player(val name: String, val symbol: Symbol)

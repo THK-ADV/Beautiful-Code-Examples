@@ -1,106 +1,100 @@
 package functions.exercise2.solution
 
-import kotlin.random.Random
 
-data class Player(val name: String, val symbol: Symbol)
+interface GameListener {
+    fun onGameStateChanged(gameState: GameState)
+    fun onInputStateChanged(inputState: InputState)
+    fun onInputRequested(): String?
+}
 
-class TicTacToe(private val player1: Player, private val player2: Player, private val moderator: Moderator) {
+private class DefaultGameListener : GameListener {
+    override fun onGameStateChanged(gameState: GameState) {}
+    override fun onInputStateChanged(inputState: InputState) {}
+    override fun onInputRequested(): String? = readLine()
+}
 
-    private var currentPlayer = getRandomPlayer()
+
+sealed class GameState
+object InitializedGame : GameState()
+object Started : GameState()
+object RoundRequested: GameState()
+class RoundStarted(val player: Player, val playground: Playground) : GameState()
+class Win(val winner: Player, val playground: Playground) : GameState()
+class Draw(val playground: Playground) : GameState()
+
+
+class TicTacToe(
+        private val player1: Player,
+        private val player2: Player,
+        private val gameListener: GameListener = DefaultGameListener()
+) : GameListener by gameListener {
+
+    private var currentPlayer = player1
     private val playground = Playground()
+    private val inputValidator = InputValidator()
+
+    private var gameState: GameState = InitializedGame
+        set(value) {
+            field = value
+            onGameStateChanged(field)
+        }
+
+    private var inputState: InputState =  InitializedInput
+        set(value) {
+            field = value
+            onInputStateChanged(field)
+        }
 
 
     fun start() {
-        moderator.introduceGame()
-        nextRound()
+        gameState = Started
+        startNextRound()
     }
 
-    private fun nextRound() {
-        when {
-            playground.hasWinState() -> moderator.announceWinner(currentPlayer, playground)
-            playground.hasDrawState() -> moderator.announceDraw(playground)
-            else -> {
-                toggleCurrentPlayer()
-                playRound()
-                nextRound()
-            }
+    private fun startNextRound() {
+        updateGameState()
+        if (gameState is RoundRequested) {
+            playRound()
+            startNextRound()
+        }
+    }
+
+
+    private fun updateGameState() {
+        gameState = when {
+            playground.hasWinState() -> Win(currentPlayer, playground)
+            playground.hasDrawState() -> Draw(playground)
+            else -> RoundRequested
         }
     }
 
     private fun playRound() {
-        moderator.introduceRound(playground)
+        toggleCurrentPlayer()
+        gameState = RoundStarted(currentPlayer, playground)
         processPlayerInput()
     }
 
     private fun processPlayerInput() {
-        val choice = getValidPlayerInput()
+        val choice = getPlayersChoice()
         playground[choice] = currentPlayer.symbol
     }
 
-
-    private fun getValidPlayerInput(): Cell {
-        val choice = getPlayersChoice()
-        return when {
-            !playground.isCellOnBoard(choice) -> {
-                moderator.sayCellOutOfBounds()
-                getValidPlayerInput()
-            }
-            !playground.isValidMove(choice) -> {
-                moderator.sayCellOccupied()
-                getValidPlayerInput()
-            }
-            else -> choice
-        }
-    }
-
     private fun getPlayersChoice(): Cell {
-        val (rowIndexString, colIndexString) = readIndicesString()
-        val rowIndex = rowIndexString.toIntOrNull()
-        val colIndex = colIndexString.toIntOrNull()
-        return when {
-            rowIndex == null -> {
-                moderator.sayInvalidRowIndex()
-                getPlayersChoice()
-            }
-            colIndex == null -> {
-                moderator.sayInvalidColumnIndex()
-                getPlayersChoice()
-            }
-            else -> Cell(rowIndex, colIndex)
+        requestInput()
+        return when(val inputState = inputState) {
+            is ValidInput -> Cell(inputState.rowIndex, inputState.colIndex)
+            else -> this.getPlayersChoice()
         }
     }
 
-    private fun readIndicesString(): Pair<String, String> {
-        val input = readPlayerInput()
-        val indicesString = input.split(',')
-        val rowIndexString = indicesString.getOrNull(0)
-        val colIndexString = indicesString.getOrNull(1)
-        return when {
-            rowIndexString.isNullOrEmpty() -> {
-                moderator.sayMissingRow()
-                readIndicesString()
-            }
-            colIndexString.isNullOrEmpty() -> {
-                moderator.sayMissingColumn()
-                readIndicesString()
-            }
-            else -> Pair(rowIndexString, colIndexString)
-        }
-    }
-
-    private fun readPlayerInput(): String {
-        return moderator.askForChoice(currentPlayer, "zeile,spalte") ?: let {
-            moderator.sayNoInputFound()
-            return readPlayerInput()
-        }
+    private fun requestInput() {
+        inputState = Requesting(currentPlayer, playground)
+        inputState = inputValidator.getErrorOf(onInputRequested(), playground)
     }
 
     private fun toggleCurrentPlayer() {
         currentPlayer = if (currentPlayer == player1) player2 else player1
     }
-
-
-    private fun getRandomPlayer() = if (Random.nextBoolean()) player1 else player2
 
 
 }
