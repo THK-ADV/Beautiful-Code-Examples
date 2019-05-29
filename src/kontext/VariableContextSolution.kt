@@ -14,10 +14,10 @@ object VariableContextSolution {
 
         fun make(candidate: Char, count: Int): String {
             createPluralDependentMessageParts(count)
-             return "There $verb $number $candidate$pluralModifier"
+            return "There $verb $number $candidate$pluralModifier"
         }
 
-        fun createPluralDependentMessageParts(count: Int) {
+        private fun createPluralDependentMessageParts(count: Int) {
             when (count) {
                 0 -> thereAreNoLetters()
                 1 -> thereIsOneLetter()
@@ -25,19 +25,19 @@ object VariableContextSolution {
             }
         }
 
-        fun thereAreAnyLetters(count: Int) {
+        private fun thereAreAnyLetters(count: Int) {
             number = count.toString()
             verb = "are"
             pluralModifier = "s"
         }
 
-        fun thereIsOneLetter() {
+        private fun thereIsOneLetter() {
             number = "1"
             verb = "is"
             pluralModifier = ""
         }
 
-        fun thereAreNoLetters() {
+        private fun thereAreNoLetters() {
             number = "no"
             verb = "are"
             pluralModifier = "s"

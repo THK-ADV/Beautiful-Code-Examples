@@ -11,8 +11,8 @@ object MemberExample {
 
         private var m_dsc: String = TODO()
 
-        private fun setName(name: String) {
-            m_dsc = name
+        private fun setM_dsc(dsc: String) {
+            m_dsc = dsc
         }
     }
 

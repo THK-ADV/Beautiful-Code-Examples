@@ -10,9 +10,13 @@ import java.util.*
 object DataRecordSolution {
 
     class Customer {
+
         private val generationTimestamp: Date = TODO()
+
         private val modificationTimestamp: Date = TODO()
+
         private val recordId: String = "102"
+
     }
 
 }

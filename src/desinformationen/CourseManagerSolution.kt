@@ -12,7 +12,9 @@ object CourseManagerSolution {
 
     class CourseManager {
         val courses: MutableList<Course> = TODO()
+
         val registeredStudents: MutableList<Student> = TODO()
+
         val rejectedStudents: MutableList<Student> = TODO()
     }
 }

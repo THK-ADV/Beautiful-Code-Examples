@@ -7,6 +7,7 @@ package suchbar
 
 object TasksSolution {
     val taskEstimate : Array<Int> = TODO()
+
     val numberOfTasks = 34
     val realDaysPerIdealDay = 4
     val workDaysPerWeak = 5

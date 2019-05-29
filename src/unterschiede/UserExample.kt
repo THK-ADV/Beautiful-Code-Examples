@@ -9,6 +9,6 @@ import data.PhoneNumber
 
 object UserExample {
 
-    class User (val nameString: String, var ageNumber: Int, val phoneString: PhoneNumber)
+    class User (val nameString: String, var ageVariable: Int, val mPhoneString: PhoneNumber)
 
 }

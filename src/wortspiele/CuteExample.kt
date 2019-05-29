@@ -8,7 +8,9 @@ package wortspiele
 object CuteExample {
 
     fun holyHandGranade(): Unit = TODO()
+
     fun whack(): Unit = TODO()
+
     fun eatMyShorts(): Unit = TODO()
 
 }

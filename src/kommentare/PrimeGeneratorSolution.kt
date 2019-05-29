@@ -33,7 +33,7 @@ object PrimeGeneratorSolution {
             }
 
             private fun uncrossIntegersUpTo(maxValue: Int) {
-                crossedOut = BooleanArray(maxValue + 1) { it -> it < 2 }
+                crossedOut = BooleanArray(maxValue + 1) { it < 2 }
             }
 
             private fun crossOutMultiples() {

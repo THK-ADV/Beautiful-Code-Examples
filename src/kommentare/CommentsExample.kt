@@ -8,8 +8,11 @@ package kommentare
 object CommentsExample {
 
     val d = 0 //Elapsed time in days
+
     val dsc = 0 //Days since Creation
+
     val dsm = 0 //Days since Modification
+
     val fa = 0 //File age in Days
 
 }

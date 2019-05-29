@@ -10,9 +10,13 @@ import java.util.*
 object DataRecordExample {
 
     class DtaRcrd102 {
+
         private val genymdhms: Date = TODO()
+
         private val modymdhms: Date = TODO()
+
         private val pszqint: String = "102"
+
     }
 
 }

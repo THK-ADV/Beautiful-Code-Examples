@@ -8,7 +8,9 @@ package wortspiele
 object CuteSolution {
 
     fun deleteAll(): Unit = TODO()
+
     fun kill(): Unit = TODO()
+
     fun abort(): Unit = TODO()
 
 }

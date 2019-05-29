@@ -30,7 +30,7 @@ object PrimeGeneratorExample {
             /**
              * Generates primes up to a maximum value
              * @param maxValue the maximum value
-             * @return an array, containing all found primes
+             * @return an IntArray, containing all found primes
              */
             fun generatePrimes(maxValue : Int) : IntArray {
                 return when {

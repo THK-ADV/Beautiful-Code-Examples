@@ -8,8 +8,11 @@ package kommentare
 object CommentsSolution {
 
     val elapsedTimeInDays = 0
+
     val daysSinceCreation = 0
+
     val daysSinceModification = 0
+
     val fileAgeInDays = 0
 
 }
